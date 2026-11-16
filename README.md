@@ -7,6 +7,18 @@ Coursework CLI for managing departments, roles, employees, and department salary
 
 **Built with:** TypeScript, Node.js, PostgreSQL, Inquirer.
 
+## What I built
+
+- Built an interactive employee-management CLI with Inquirer.
+- Designed department, role, employee, and manager relationships in PostgreSQL.
+- Implemented parameterized SQL for CRUD operations, filtered employee views, and department salary totals.
+
+## Explore the source
+
+- [src/index.ts](src/index.ts) — Interactive menus and prompts.
+- [src/db/index.ts](src/db/index.ts) — Parameterized SQL operations.
+- [src/db/schema.sql](src/db/schema.sql) — Relational schema.
+
 ## Run locally
 
 Requires Node.js/npm, PostgreSQL, and `psql`. From the repository root:
