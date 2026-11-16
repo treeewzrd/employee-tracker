@@ -1,5 +1,12 @@
 # Employee Tracker
 
+**Status: Coursework / learning project.**
+
+A TypeScript coursework command-line employee database application using PostgreSQL.
+
+Preserved as a learning reference; production deployment and current compatibility have not been verified.
+
+
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-brightgreen)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue)](https://www.postgresql.org/)
