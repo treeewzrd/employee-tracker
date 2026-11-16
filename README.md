@@ -1,132 +1,121 @@
 # Employee Tracker
 
-**Status: Coursework / learning project.**
+**Coursework / learning project**
 
-A TypeScript coursework command-line employee database application using PostgreSQL.
+A terminal application for managing departments, roles, and employees in PostgreSQL. Built to practice TypeScript, relational database design, SQL joins, parameterized queries, and interactive command-line menus.
 
-Preserved as a learning reference; production deployment and current compatibility have not been verified.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
+## What the application does
 
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-brightgreen)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue)](https://www.postgresql.org/)
-[![Inquirer](https://img.shields.io/badge/Inquirer-8.2.4-yellow)](https://www.npmjs.com/package/inquirer/v/8.2.4)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue)](https://www.typescriptlang.org/)
+- Lists employees, roles, and departments.
+- Filters employees by department or manager.
+- Adds and removes employees, roles, and departments.
+- Updates an employee's role or manager.
+- Calculates department salary totals from employee roles.
 
-A command-line Content Management System (CMS) for managing a company's employee database, built with Node.js, TypeScript, Inquirer, and PostgreSQL.
+This is a coursework reference, not a production human-resources system. Use sample data.
 
----
+## Stack
 
-## Table of Contents
+TypeScript, Node.js, PostgreSQL, node-postgres (`pg`), Inquirer, dotenv, and asciiart-logo.
 
-- [Features](#features)
-- [Demo Video](#demo-video)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Database Schema](#database-schema)
-- [Project Structure](#project-structure)
-- [Technologies Used](#technologies-used)
-- [License](#license)
+## Local setup
 
----
+Requirements: Node.js with npm, a running local PostgreSQL server, and the PostgreSQL `psql` client. A currently supported Node.js version is preferable; this cleanup has not established a tested runtime version.
 
-## Features
+### 1. Download and install dependencies
 
-- View all departments, roles, and employees
-- Add new departments, roles, and employees
-- Update employee roles and managers
-- View employees by department or manager
-- Delete departments, roles, and employees
-- View total utilized budget by department
+```bash
+git clone https://github.com/treeewzrd/EMPLOYEE-TRACKER.git
+cd EMPLOYEE-TRACKER
+npm ci
+```
 
----
+### 2. Configure your private environment
 
-## Demo Video
+For an existing local checkout, preserve your current credentials privately before pulling changes that remove the previously tracked `.env` file. Do not overwrite an existing working `.env` with the example.
 
-> 📹 **Demo Video:**  
-> [Watch the Screencastify Demo](https://app.screencastify.com/v2/watch/JhRsX9KFJvd7oDodaLS9)  
+For a new checkout:
 
----
+```bash
+cp .env.example .env
+```
 
-## Installation
+Edit the root `.env` file:
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/your-username/employee-tracker.git
-   cd employee-tracker
+```dotenv
+DB_NAME=employees
+DB_USER=your_database_user
+DB_PASSWORD=your_unique_local_password
+```
 
-2. **Install dependencies:*
-   npm install
+The application loads `DB_NAME`, `DB_USER`, and `DB_PASSWORD` through dotenv. Its current connection code fixes the host to `localhost` and port to `5432`; `DB_HOST` and `DB_PORT` do not override them.
 
-3. **Configure environmental variables**
-    Copy .env.example to .env and fill in your PostgreSQL credentials:
+Use a local PostgreSQL role appropriate for this exercise. The initialization script requires permission to create and drop the exercise database. Keep credentials out of Git, and replace any password previously published in repository history.
 
-    DB_NAME=employees DB_USER=your_db_user 
-    DB_PASSWORD=your_db_password 
-    DB_HOST=localhost DB_PORT=5432
+### 3. Initialize a disposable database
 
-4. **Set up the database:**
-    Ensure PostgreSQL is running.
-    Run the schema and seed scripts:
+**The existing schema script drops and recreates a database named `employees`. It erases any existing data in that database.** Review [schema.sql](src/db/schema.sql) before running it. Do not use it against a database containing data you need to keep.
 
-    psql -U your_db_user -f [schema.sql](http://_vscodecontentref_/0)
-    psql -U your_db_user -f  [seed.sql](http://_vscodecontentref_/1)
+On a local development instance where `employees` is reserved for this exercise, run the following from the repository root. Replace `your_database_user` with your PostgreSQL role; `-W` prompts privately for its password.
 
-5. **Build the project**
-    npm run build
+```bash
+psql -h localhost -U your_database_user -d postgres -W -v ON_ERROR_STOP=1 -f src/db/schema.sql
+```
 
-6. **Start the application:**
-    npm start
+Optionally load the sample departments, roles, and employees into the newly initialized database:
+
+```bash
+psql -h localhost -U your_database_user -d employees -W -v ON_ERROR_STOP=1 -f src/db/seed.sql
+```
+
+Both SQL scripts explicitly target `employees`. Changing only `DB_NAME` does not retarget these scripts. The seed script is intended for a fresh schema; repeated runs are not a reset mechanism.
+
+### 4. Build and start
+
+Run from the repository root so dotenv can find `.env`:
+
+```bash
+npm run build
+npm start
+```
+
+The build compiles `src/` into `dist/`. Start runs `dist/index.js`; rebuild after changing TypeScript source.
 
 ## Usage
-On launch, you'll see an ASCII logo and a menu of actions.
-Use arrow keys to navigate and select options.
-Follow prompts to view, add, update, or delete data.
-To exit, select "Quit" from the menu.
 
-## Database Schema
-The application uses three main tables:
+Use the arrow keys and Enter to choose an action from the Employee Manager menu. Create departments before roles, then create employees using those roles. Choose **Quit** to exit.
 
-department
-    id (SERIAL PRIMARY KEY)
-    name (VARCHAR(30) UNIQUE NOT NULL)
-role
-    id (SERIAL PRIMARY KEY)
-    title (VARCHAR(30) UNIQUE NOT NULL)
-    salary (DECIMAL NOT NULL)
-    department_id (INTEGER NOT NULL, FOREIGN KEY)
-employee
-    id (SERIAL PRIMARY KEY)
-    first_name (VARCHAR(30) NOT NULL)
-    last_name (VARCHAR(30) NOT NULL)
-    role_id (INTEGER NOT NULL, FOREIGN KEY)
-    manager_id (INTEGER, FOREIGN KEY, nullable)
+Deleting a department also deletes its roles and employees. Deleting a role also deletes employees assigned to it. Deleting a manager leaves their reports with no manager, following the schema's foreign-key rules.
 
-## Project Structure
+## Verification
 
-employee-tracker/
-├── src/
-│   ├── [index.ts](http://_vscodecontentref_/2)               # Main CLI application
-│   ├── db/
-│   │   ├── [connection.ts](http://_vscodecontentref_/3)      # PostgreSQL connection setup
-│   │   ├── [index.ts](http://_vscodecontentref_/4)           # Database query class
-│   │   ├── [schema.sql](http://_vscodecontentref_/5)         # Database schema
-│   │   └── [seed.sql](http://_vscodecontentref_/6)           # Seed data
-│   └── types/
-│       └── [asciiart-logo.d.ts](http://_vscodecontentref_/7) # Type definitions
-├── .env                      # Environment variables
-├── [package.json](http://_vscodecontentref_/8)
-├── [tsconfig.json](http://_vscodecontentref_/9)
-└── [README.md](http://_vscodecontentref_/10)
+During the documentation cleanup, the commands and configuration above were checked against `package.json`, the database connection code, the SQL scripts, and the menu implementation.
 
-## Technologies Used
-    Node.js
-    TypeScript
-    Inquirer v8.2.4
-    PostgreSQL
-    pg
-    asciiart-logo
-    dotenv
+Dependency installation, compilation, and interactive database behavior were **not executed** during that review. The repository's `npm test` command is a placeholder that exits with an error; it does not run an automated test suite.
+
+To verify a local setup using disposable sample data:
+
+1. Build and start the application.
+2. View departments, roles, and employees.
+3. Add a sample department, role, and employee.
+4. Change that employee's role and manager, then verify the displayed values.
+5. Check department salary totals.
+6. Delete only the sample records and confirm the results.
+
+## Project files
+
+| Path | Purpose |
+| --- | --- |
+| [src/index.ts](src/index.ts) | Interactive menu and prompts |
+| [src/db/index.ts](src/db/index.ts) | Parameterized database operations |
+| [src/db/connection.ts](src/db/connection.ts) | PostgreSQL connection pool |
+| [src/db/schema.sql](src/db/schema.sql) | Destructive exercise database initialization |
+| [src/db/seed.sql](src/db/seed.sql) | Sample records |
+| [.env.example](.env.example) | Safe configuration template |
+| [package.json](package.json) | Dependencies and run commands |
 
 ## License
-This project is licensed under the ISC License.
+
+[ISC](LICENSE). Maintained publicly as coursework by [treeewzrd](https://github.com/treeewzrd).
