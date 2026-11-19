@@ -1,6 +1,8 @@
 # Employee Tracker
 
-![Status](https://img.shields.io/badge/status-coursework-blue)
+**Coursework for school**
+
+![Coursework](https://img.shields.io/badge/Coursework-blue)
 [![License: ISC](https://img.shields.io/badge/license-ISC-green)](LICENSE)
 
 Coursework CLI for managing departments, roles, employees, and department salary totals.
